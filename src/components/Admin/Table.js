@@ -2,6 +2,8 @@ import React from "react";
 import Admin from "./Admin";
 import { useState, useEffect } from "react";
 import PopUpTable, { PopUpEditTable } from "./popUp";
+import { toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 export default function Table() {
   const [modalTable, setModalTable] = useState(false);
@@ -47,22 +49,46 @@ export default function Table() {
   };
 
   const handleDeleteTable = async (id) => {
-    try {
-      const response = await fetch(`${delTable}/${id}`, {
-        method: "DELETE",
-        headers: {
-          "Content-Type": "application/json",
-        },
-      });
+    const messDel = window.confirm("Do you want to delete this table?");
+    if (messDel) {
+      try {
+        const response = await fetch(`${delTable}/${id}`, {
+          method: "DELETE",
+          headers: {
+            "Content-Type": "application/json",
+          },
+        });
 
-      if (response.ok) {
-        console.log("Delete successful");
-        getAllTableData();
-      } else {
-        console.log("Delete failed");
+        if (response.ok) {
+          console.log("Delete successful");
+          toast.success("Delete successful", {
+            position: "top-center",
+            autoClose: 5000,
+            hideProgressBar: false,
+            closeOnClick: true,
+            pauseOnHover: true,
+            draggable: true,
+            progress: undefined,
+            theme: "dark",
+          });
+          getAllTableData();
+        } else {
+          console.log("Delete failed");
+        }
+      } catch (error) {
+        console.error("Error calling API:", error);
       }
-    } catch (error) {
-      console.error("Error calling API:", error);
+    } else {
+      toast.error("Delete failed", {
+        position: "top-center",
+        autoClose: 5000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "dark",
+      });
     }
   };
 

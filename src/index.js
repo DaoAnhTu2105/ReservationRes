@@ -10,6 +10,7 @@ import Login from "./components/Admin/Login";
 import Table from "./components/Admin/Table";
 import Restaurant from "./components/Admin/Restaurant";
 import UserManagement from "./components/Admin/UserManagement";
+import { ToastContainer } from "react-toastify";
 //User CSS
 import "./CSS/lib/animate/animate.min.css";
 import "./CSS/lib/owlcarousel/assets/owl.carousel.min.css";
@@ -30,27 +31,33 @@ import "./CSS/admin-custom.css";
 import "./CSS/loginCSS/main.css";
 import "./CSS/loginCSS/util.css";
 import "./CSS/restaurant.css";
+import "./CSS/admin-custom.css";
+import Staff from "./components/Admin/ManageStaff";
+import TableManageStaff from "./components/Admin/TableManageStaff";
+import TableReservation from "./components/Admin/TableReservationManagement";
+import AdminManageMenu from "./components/Admin/AdminMenu";
 
 const root = ReactDOM.createRoot(document.getElementById("root"));
 root.render(
   <React.StrictMode>
     <BrowserRouter>
+      <ToastContainer />
       {/* STAFF */}
-      {/* <Routes>
+      <Routes>
         <Route path="/staff" element={<Staff />}></Route>
         <Route
           path="/staff/tableReservation"
           element={<TableReservation />}
         ></Route>
-        <Route path="/staff/table" element={<TableForStaff />}></Route>
-      </Routes> */}
+        <Route path="/staff/table" element={<TableManageStaff />}></Route>
+      </Routes>
       {/* Admin */}
       <Routes>
         <Route path="/admin/login" element={<Login />}></Route>
         <Route path="/admin/users" element={<UserManagement />}></Route>
         <Route path="/admin/restaurant" element={<Restaurant />}></Route>
         <Route path="/admin/restaurant/table/:id" element={<Table />}></Route>
-        <Route path="/admin/menu" element={<Menu />}></Route>
+        <Route path="/admin/menu" element={<AdminManageMenu />}></Route>
       </Routes>
 
       <Routes>
