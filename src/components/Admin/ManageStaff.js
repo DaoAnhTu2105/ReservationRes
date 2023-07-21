@@ -34,12 +34,7 @@ function Staff() {
                     <p>Reservation</p>
                   </Link>
                 </li>
-                <li className="nav-item has-treeview">
-                  <Link to={`/staff/table`} className="nav-link">
-                    <i className="nav-icon fas fa-edit"></i>
-                    <p>Reserving Table</p>
-                  </Link>
-                </li>
+
                 <div className="mt-5"></div>
                 <div className="mt-5"></div>
                 <div className="mt-5"></div>
@@ -52,7 +47,7 @@ function Staff() {
                     data-toggle="dropdown"
                     to="/admin/login"
                   >
-                    <i class="nav-icon fas fa-power-off"></i>
+                    <i className="nav-icon fas fa-power-off"></i>
                     &nbsp; Log out
                   </Link>
                 </li>

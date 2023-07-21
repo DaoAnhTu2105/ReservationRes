@@ -26,11 +26,11 @@ const Header = () => {
 
   return (
     <nav className={navClass}>
-      <a href="/" className="navbar-brand p-0">
+      <Link to="/" className="navbar-brand p-0">
         <h1 className="text-primary m-0">
           <i className="fa fa-utensils me-3"></i>Restoran
         </h1>
-      </a>
+      </Link>
       <button
         className="navbar-toggler"
         type="button"
@@ -44,7 +44,7 @@ const Header = () => {
           <a href="#home_p" className="nav-item nav-link active">
             Home
           </a>
-          <a  href="#menu_a" className="nav-item nav-link">
+          <a href="#menu_a" className="nav-item nav-link">
             Menu
           </a>
         </div>

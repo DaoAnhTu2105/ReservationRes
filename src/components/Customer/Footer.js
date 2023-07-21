@@ -13,29 +13,15 @@ function Footer() {
               Contact
             </h4>
             <p className="mb-2">
-              <i className="fa fa-map-marker-alt me-3"></i>123 Street, New York,
-              USA
+              <i className="fa fa-map-marker-alt me-3"></i>Duong 123. Quan 1 Tp
+              Hcm VietNam
             </p>
             <p className="mb-2">
-              <i className="fa fa-phone-alt me-3"></i>+012 345 67890
+              <i className="fa fa-phone-alt me-3"></i>+84 338 010 426
             </p>
             <p className="mb-2">
-              <i className="fa fa-envelope me-3"></i>info@example.com
+              <i className="fa fa-envelope me-3"></i>vuncse151184@fpt.edu.vn
             </p>
-            <div className="d-flex pt-2">
-              <a className="btn btn-outline-light btn-social" href="/">
-                <i className="fab fa-twitter"></i>
-              </a>
-              <a className="btn btn-outline-light btn-social" href="/">
-                <i className="fab fa-facebook-f"></i>
-              </a>
-              <a className="btn btn-outline-light btn-social" href="/">
-                <i className="fab fa-youtube"></i>
-              </a>
-              <a className="btn btn-outline-light btn-social" href="/">
-                <i className="fab fa-linkedin-in"></i>
-              </a>
-            </div>
           </div>
           <div className="col-lg-4 col-md-6">
             <h4 className="section-title ff-secondary text-start text-primary fw-normal mb-4">

@@ -155,7 +155,6 @@ export default function UserManagement() {
                       <thead>
                         <tr>
                           <th>Staff ID</th>
-                          <th>Password</th>
                           <th>Email</th>
                           <th>Name</th>
                           <th>Options</th>
@@ -168,7 +167,6 @@ export default function UserManagement() {
                             !staff.isDeleted && (
                               <tr key={staff.userId}>
                                 <td>{staff.userId}</td>
-                                <td>{staff.password}</td>
                                 <td>{staff.email}</td>
                                 <td>{staff.name}</td>
                                 <td>

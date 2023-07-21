@@ -33,7 +33,6 @@ import "./CSS/loginCSS/util.css";
 import "./CSS/restaurant.css";
 import "./CSS/admin-custom.css";
 import Staff from "./components/Admin/ManageStaff";
-import TableManageStaff from "./components/Admin/TableManageStaff";
 import TableReservation from "./components/Admin/TableReservationManagement";
 import AdminManageMenu from "./components/Admin/AdminMenu";
 
@@ -49,7 +48,6 @@ root.render(
           path="/staff/tableReservation"
           element={<TableReservation />}
         ></Route>
-        <Route path="/staff/table" element={<TableManageStaff />}></Route>
       </Routes>
       {/* Admin */}
       <Routes>

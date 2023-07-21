@@ -29,13 +29,81 @@ const style = {
 };
 
 function BookTable() {
+  const [openBookNowModal, setOpenBookNowModal] = useState(false);
+  const [encodeOtpRes, setEncodeOtpRes] = useState("");
+  // Function to open "Book Now" modal
+  const handleOpenBookNowModal = async () => {
+    setOpenBookNowModal(true);
+    const phone = document.getElementById("phoneForReservation").value;
+    try {
+      const response = await fetch(
+        `http://tablereservationapi.somee.com/API/Customers/GenerateOTP?phone=${phone}`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(phone),
+        }
+      );
+
+      if (response.ok) {
+        try {
+          const newEncodeOtpRes = await response.json();
+          setEncodeOtpRes(newEncodeOtpRes);
+          console.log(newEncodeOtpRes);
+        } catch (error) {
+          console.error("Error parsing JSON:", error);
+        }
+      } else {
+        // handleHistory()
+      }
+    } catch (error) {
+      // Handle error
+      console.error("Error:", error);
+    }
+  };
+
+  // Function to close "Book Now" modal
+  const handleCloseBookNowModal = () => {
+    setOpenBookNowModal(false);
+  };
+
   const navigate = useNavigate();
   const [open, setOpen] = useState(false);
-  const handleOpen = () => {
+  const [otpHistory, setOtpHistory] = useState("");
+
+  const handleOpen = async () => {
     setOpen(true);
+    const phone = document.getElementById("phoneForHistory").value;
+    try {
+      const response = await fetch(
+        `http://tablereservationapi.somee.com/API/Customers/GenerateOTP?phone=${phone}`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(phone),
+        }
+      );
+      if (response.ok) {
+        try {
+          const data = await response.json();
+          console.log(data);
+          setOtpHistory(data);
+        } catch (error) {
+          console.error("Error parsing JSON:", error);
+        }
+      } else {
+        // handleHistory()
+      }
+    } catch (error) {
+      // Handle error
+      console.error("Error:", error);
+    }
   };
-  const [valueDateTime, setValue] = React.useState(dayjs("2022-04-17T15:30"));
-  console.log(valueDateTime);
+  const [valueDateTime, setValue] = React.useState(dayjs());
   const handleClose = () => setOpen(false);
   const inputRefs = useRef([]);
 
@@ -51,16 +119,27 @@ function BookTable() {
       inputRefs.current[index + 1].focus();
     }
   };
-
-  const handleSubmit = async () => {
-    await handleOtpVerify();
+  const handleSubmitReservation = async () => {
+    await handleOtpVerifyReservation();
     handleClose();
   };
+  const handleSubmit = async () => {
+    await handleSubmitHistory();
+    handleClose();
+  };
+  const handleOtpVerifyReservation = async () => {
+    if (otpValues.join("") === String(encodeOtpRes.data)) {
+      console.log("OTP:", encodeOtpRes.data);
+      handleReserve();
+      handleCloseBookNowModal();
+    } else {
+      handleCloseBookNowModal();
+    }
+  };
 
-  const handleReserve = async (event) => {
-    event.preventDefault();
+  const handleReserve = async () => {
     const customerName = document.getElementById("name").value;
-    const phone = document.getElementById("phone").value;
+    const phone = document.getElementById("phoneForReservation").value;
     const time = valueDateTime.toISOString();
     const guestSize = parseInt(document.getElementById("select1").value, 10);
     const note = document.getElementById("message").value;
@@ -84,19 +163,19 @@ function BookTable() {
           body: JSON.stringify(payload),
         }
       );
+      console.log("aaaaaaaaaaaaaaaaaa", response);
       if (response.ok) {
         try {
           const data = await response.json();
-
           toast.success("Success Booking!", {
-            position: "top-right",
+            position: "top-center",
             autoClose: 5000,
             hideProgressBar: false,
             closeOnClick: true,
             pauseOnHover: true,
             draggable: true,
             progress: undefined,
-            theme: "light",
+            theme: "colored",
           });
 
           console.log("data", data);
@@ -104,64 +183,28 @@ function BookTable() {
           console.error("Error parsing JSON:", error);
         }
       } else {
-        throw new Error("Request failed with status: " + response.status);
+        toast.warn("You have to wait 30 minutes to create new reservation!!", {
+          position: "top-center",
+          autoClose: 8000,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+          progress: undefined,
+          theme: "colored",
+        });
       }
     } catch (error) {
       console.error("Error:", error);
     }
   };
-
-  const handleOtpVerify = async () => {
-    const phone = document.getElementById("phoneForHistory").value;
-    try {
-      const response = await fetch(
-        `http://tablereservationapi.somee.com/API/Customers/GenerateOTP?phone=${phone}`,
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify(phone),
-        }
-      );
-
-      if (response.ok) {
-        try {
-          const data = await response.json();
-          console.log(data);
-
-          if (otpValues.join("") === String(data.data)) {
-            console.log("OTP verification successful");
-          } else {
-            const phone = document.getElementById("phoneForHistory").value;
-            if (phone) {
-              console.log("OTP verification failed", phone);
-              navigate(`/history/phone/${phone}`);
-            }
-          }
-        } catch (error) {
-          console.error("Error parsing JSON:", error);
-        }
-      } else {
-        // handleHistory()
+  const handleSubmitHistory = async () => {
+    if (otpValues.join("") === String(otpHistory.data)) {
+      const phone = document.getElementById("phoneForHistory").value;
+      if (phone) {
+        navigate(`/history/phone/${phone}`);
       }
-    } catch (error) {
-      // Handle error
-      console.error("Error:", error);
     }
-  };
-
-  const handleHistory = () => {
-    // const urlHistory = `http://tablereservationapi.somee.com/API/Customers/GetAllReservationByPhone?phone=${phone}`;
-    // fetch(urlHistory,)
-    //   .then(response => {
-    //     if (!response.ok) {
-    //       throw new Error(`HTTP Status: ${response.status}`)
-    //     }
-    //     return response.json()
-    //   })
-    //   .then(data => { setHistory(data) })
-    //   .catch(error => console.log(error.message));
   };
 
   return (
@@ -179,82 +222,147 @@ function BookTable() {
                 Reservation
               </h5>
               <h1 className="text-white mb-4">Book A Table Online</h1>
-              <form onSubmit={handleReserve}>
-                <div className="row g-3">
-                  <div className="col-md-6">
-                    <div className="form-floating">
-                      <input
-                        type="text"
-                        className="form-control"
-                        id="name"
-                        placeholder="Your Name"
-                      />
-                      <label htmlFor="name" style={{ color: "#747474" }}>
-                        Your Name
-                      </label>
-                    </div>
-                  </div>
-                  <div className="col-md-6">
-                    <div className="form-floating">
-                      <input
-                        type="phone"
-                        className="form-control"
-                        id="phone"
-                        placeholder="Your Phone"
-                      />
-                      <label htmlFor="email" style={{ color: "#747474" }}>
-                        Your Phone
-                      </label>
-                    </div>
-                  </div>
-                  <div className="col-md-12">
-                    <div
-                      style={{ backgroundColor: "white", paddingTop: "10px" }}
-                    >
-                      <LocalizationProvider dateAdapter={AdapterDayjs}>
-                        <DemoContainer components={["DateTimePicker"]}>
-                          <DateTimePicker
-                            label="Date & Time"
-                            value={valueDateTime}
-                            onChange={(newValue) => setValue(newValue)}
-                          />
-                        </DemoContainer>
-                      </LocalizationProvider>
-                    </div>
-                  </div>
-                  <div className="col-md-12" style={{ marginRight: "30px" }}>
-                    <div className="form-floating">
-                      <select className="form-select" id="select1">
-                        <option value="2">2 people </option>
-                        <option value="4">4 people </option>
-                        <option value="6">6 or more people</option>
-                      </select>
-                      <label htmlFor="select1">Size</label>
-                    </div>
-                  </div>
-                  <div className="col-12">
-                    <div className="form-floating">
-                      <textarea
-                        className="form-control"
-                        placeholder="Note"
-                        id="message"
-                        style={{ height: "100px" }}
-                      ></textarea>
-                      <label htmlFor="message" style={{ color: "#747474" }}>
-                        Note
-                      </label>
-                    </div>
-                  </div>
-                  <div className="col-12">
-                    <button
-                      className="btn btn-primary w-100 py-3"
-                      type="submit"
-                    >
-                      Book Now
-                    </button>
+              <div className="row g-3">
+                <div className="col-md-6">
+                  <div className="form-floating">
+                    <input
+                      type="text"
+                      className="form-control"
+                      id="name"
+                      placeholder="Your Name"
+                    />
+                    <label htmlFor="name" style={{ color: "#747474" }}>
+                      Your Name
+                    </label>
                   </div>
                 </div>
-              </form>
+                <div className="col-md-6">
+                  <div className="form-floating">
+                    <input
+                      type="phone"
+                      className="form-control"
+                      id="phoneForReservation"
+                      placeholder="Your Phone"
+                    />
+                    <label htmlFor="email" style={{ color: "#747474" }}>
+                      Your Phone
+                    </label>
+                  </div>
+                </div>
+                <div className="col-md-12">
+                  <div style={{ backgroundColor: "white", paddingTop: "10px" }}>
+                    <LocalizationProvider dateAdapter={AdapterDayjs}>
+                      <DemoContainer components={["DateTimePicker"]}>
+                        <DateTimePicker
+                          label="Date & Time"
+                          value={valueDateTime}
+                          onChange={(newValue) => setValue(newValue)}
+                          minDateTime={valueDateTime}
+                        />
+                      </DemoContainer>
+                    </LocalizationProvider>
+                  </div>
+                </div>
+                <div className="col-md-12" style={{ marginRight: "30px" }}>
+                  <div className="form-floating">
+                    <select className="form-select" id="select1">
+                      <option value="2">2 people </option>
+                      <option value="4">4 people </option>
+                      <option value="6">6 or more people</option>
+                    </select>
+                    <label htmlFor="select1" style={{ color: "#747474" }}>
+                      Size
+                    </label>
+                  </div>
+                </div>
+                <div className="col-12">
+                  <div className="form-floating">
+                    <textarea
+                      className="form-control"
+                      placeholder="Note"
+                      id="message"
+                      style={{ height: "100px" }}
+                    ></textarea>
+                    <label htmlFor="message" style={{ color: "#747474" }}>
+                      Note
+                    </label>
+                  </div>
+                </div>
+                <div className="col-12">
+                  <button
+                    className="btn btn-primary w-100 py-3"
+                    style={{ color: "white", backgroundColor: "#FEA116" }}
+                    onClick={handleOpenBookNowModal}
+                  >
+                    Book Now
+                  </button>
+                  <Modal
+                    aria-labelledby="transition-modal-title"
+                    aria-describedby="transition-modal-description"
+                    open={openBookNowModal}
+                    onClose={handleCloseBookNowModal}
+                    closeAfterTransition
+                    slotProps={{
+                      backdrop: {
+                        timeout: 500,
+                      },
+                    }}
+                  >
+                    <Fade in={openBookNowModal}>
+                      <Box sx={style}>
+                        <Typography
+                          id="transition-modal-description"
+                          sx={{ mt: 2 }}
+                        >
+                          An OTP has been sent to your phone. Please verify to
+                          continue.
+                        </Typography>
+                        <Box
+                          sx={{
+                            display: "flex",
+                            alignItems: "center",
+                            gap: "16px",
+                            mt: 2,
+                          }}
+                        >
+                          {[0, 1, 2, 3].map((index) => (
+                            <TextField
+                              key={index}
+                              inputRef={(ref) =>
+                                (inputRefs.current[index] = ref)
+                              }
+                              variant="outlined"
+                              onChange={(event) =>
+                                handleInputChange(index, event)
+                              }
+                              inputProps={{
+                                maxLength: 1,
+                                style: { textAlign: "center" },
+                              }}
+                            />
+                          ))}
+                        </Box>
+                        <Box
+                          sx={{
+                            pt: 5,
+                            display: "flex",
+                            justifyContent: "center",
+                          }}
+                        >
+                          <Button
+                            variant="contained"
+                            size="medium"
+                            onClick={handleSubmitReservation}
+                          >
+                            Submit &nbsp;
+                            <SendIcon />
+                          </Button>
+                        </Box>
+                      </Box>
+                    </Fade>
+                  </Modal>
+                </div>
+              </div>
             </div>
             <div className="p-5 wow fadeInUp col-lg-6" data-wow-delay="0.2s">
               <h5 className="section-title ff-secondary text-start text-primary fw-normal">
