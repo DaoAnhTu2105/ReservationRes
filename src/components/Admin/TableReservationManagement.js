@@ -71,6 +71,7 @@ export default function TableReservation() {
                           <th>Time</th>
                           <th>Note</th>
                           <th>Guest Size</th>
+                          <th>Status</th>
                         </tr>
                       </thead>
                       <tbody>
@@ -82,7 +83,8 @@ export default function TableReservation() {
                               <td>{res.customerName}</td>
                               <td>{res.time}</td>
                               <td>{res.note}</td>
-                              <td>{res.guestSize}</td>
+                              <td>{res.size}</td>
+                              <td>{res.status}</td>
                             </tr>
                           ))}
                       </tbody>
